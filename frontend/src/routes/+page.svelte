@@ -1,14 +1,16 @@
 <script>
-const onKeyPress = e => {
-    if (e.charCode === 13) addInput();
-};
+    import Console from "../components/Console.svelte";
+    
+    const onKeyPress = e => {
+        if (e.charCode === 13) addInput();
+    };
 
-function addInput()
-{
+    function addInput()
+    {
     var inputValue = document.getElementById("inputVal").value;
 
-    var konsoleDiv = document.getElementById("konsoleDiv")
-    var konsole = document.getElementById("konsole");
+    var consoleDiv = document.getElementById("konsoleDiv")
+    var console = document.getElementById("konsole");
     var li = document.createElement("li");
 
     // inputValue    const cmdArgs = inputValue.split(' ');
@@ -16,30 +18,29 @@ function addInput()
 
     switch(inputValue)
     {
-    case "clear":
-        konsole.innerHTML = null;
-        li.appendChild(document.createTextNode(inputValue));
+        case "clear":
+        console.innerHTML = null;
+            li.appendChild(document.createTextNode(inputValue));
+            break;
 
-        break;
-
-    default:
-    konsole.innerHTML += "Instruction: " +  inputValue + " not found.";     
-    break;
+        default:
+            console.innerHTML += "Instruction: " +  inputValue + " not found.";     
+            break;
     }
     
-    konsole?.appendChild(li);
+    console?.appendChild(li);
 
 
     
-    konsoleDiv.scrollTop = konsoleDiv.scrollHeight;
+    consoleDiv.scrollTop = consoleDiv.scrollHeight;
 }
 </script>
 <div class="flex justify-center mt-3">
     <img class="h-52 mt-5 opacity-60" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/SCP_Foundation_Logo_v2_Fixed.png">
 </div>
 <div class="m-6">
-    <div class="flex mt-5 max-h-64 h-64 overflow-x-scroll mb-3" id="konsoleDiv">
-        <ul id="konsole">
+    <div class="flex mt-5 max-h-64 h-64 overflow-x-scroll mb-3" id="consoleDiv">
+        <ul id="console">
         </ul> 
      </div>
      <div>
@@ -47,7 +48,7 @@ function addInput()
      </div>
 </div>
 <style>
-    #konsole
+    #console
     {
         font-family: monospace;
         color:rgb(0, 255, 0);    
