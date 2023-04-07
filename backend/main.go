@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	workers "github.com/NotASimp69/SCP-Site/backend/modules"
 )
@@ -13,6 +14,7 @@ func fetchPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var query string = r.URL.Query().Get("query")
+	var sanitized_query string
 
 	if query == "" {
 		fetched := "Please provide a valid search query"
@@ -20,8 +22,15 @@ func fetchPage(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonResp)
 		return
 	} else {
-		fetched := workers.Fetch(query)
-		fmt.Println("Fetched ", fetched)
+		for _, char := range query {
+			var c string = string(char)
+			i, err := strconv.Atoi(c)
+			if err == nil {
+				sanitized_query += strconv.Itoa(i)
+			}
+		}
+		fmt.Println(sanitized_query)
+		fetched := workers.Fetch(sanitized_query)
 
 		jsonResp, err := json.Marshal(fetched)
 		if err != nil {

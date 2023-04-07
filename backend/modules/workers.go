@@ -9,12 +9,14 @@ import (
 )
 
 type Entry struct {
-	Title       string
-	Class       string
-	Clearance   int
-	Procedures  string
-	Description string
-	Image       string
+	Title     string
+	Class     string
+	Clearance int
+	//Procedures  string
+	//Description string
+	Content  string
+	Addendum string
+	Image    string
 }
 
 func scrape(query string) Entry {
@@ -26,7 +28,6 @@ func scrape(query string) Entry {
 	)
 
 	c.OnHTML("div", func(e *colly.HTMLElement) {
-		//e.Request.Visit(e.Attr("href"))
 		if e.Attr("id") == "page-title" {
 			title, err := e.DOM.Html()
 			if err == nil {
@@ -39,20 +40,30 @@ func scrape(query string) Entry {
 			}
 		} else if e.Attr("id") == "page-content" {
 			e.ForEach("p", func(i int, h *colly.HTMLElement) {
+				if h.DOM.Parent().Is("blockquote") {
+					return
+				}
+
 				if strings.Contains(h.Text, "Object Class") {
 					entry.Class = strings.Replace(h.Text, "Object Class: ", "", -1)
-				} else if strings.Contains(h.Text, "Special Containment Procedures") {
+				} else {
+					entry.Content += "\n" + h.Text
+				}
+				/* else if strings.Contains(h.Text, "Special Containment Procedures") {
 					entry.Procedures = strings.Replace(h.Text, "Special Containment Procedures: ", "", -1)
 				} else if strings.Contains(h.Text, "Description") {
 					entry.Description = strings.Replace(h.Text, "Description: ", "", -1)
-				}
+				}*/
 			})
 			e.ForEach("img", func(i int, h *colly.HTMLElement) {
-				fmt.Println(i)
-				fmt.Println(h)
 				if h.Attr("class") == "image" {
 					entry.Image = h.Attr("src")
 				}
+			})
+			e.ForEach("blockquote", func(i int, h *colly.HTMLElement) {
+				h.ForEach("p", func(i int, j *colly.HTMLElement) {
+					entry.Addendum += "\n" + j.Text
+				})
 			})
 		}
 	})
@@ -61,11 +72,7 @@ func scrape(query string) Entry {
 		log.Fatalln("Something went wrong while fetching the requested data...")
 	})
 
-	// c.OnRequest(func(r *colly.Request) {
-	// 	fmt.Println("Visiting", r.URL)
-	// })
-
-	c.Visit("https://scp-wiki.wikidot.com/" + query)
+	c.Visit("https://scp-wiki.wikidot.com/scp-" + query)
 
 	return entry
 }
