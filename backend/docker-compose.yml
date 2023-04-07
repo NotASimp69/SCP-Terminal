@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  
+  scp-backend:
+    build: .
+    container_name: 'scp-backend'
+    command: go run main.go
+    volumes:
+      - .:/opt/app/scp
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    restart: always
