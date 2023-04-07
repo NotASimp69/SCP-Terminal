@@ -11,10 +11,22 @@ type Entry struct {
 	Content string `json:"Content"`
 }
 
-func Fetch() string { // has to be uppercase to be public
+func scrap(query string) Entry {
+	var entry Entry
+
+	entry = Entry{Title: "SCP-001", Class: "Euclid", Content: "Testing"}
+
+	fmt.Println(entry)
+	return entry
+}
+
+func Fetch(query string) string { // has to be uppercase to be public
 	fmt.Println("Initializing fetch...")
+	fmt.Println(query)
 	var data string
 
-	time.Sleep(2 * time.Second)
+	go scrap(query)
+
+	time.Sleep(5 * time.Second)
 	return data
 }
