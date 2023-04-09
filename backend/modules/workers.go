@@ -2,7 +2,8 @@ package workers
 
 import (
 	"fmt"
-	"log"
+	"math/rand"
+	"strconv"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -69,10 +70,17 @@ func scrape(query string) Entry {
 	})
 
 	c.OnError(func(_ *colly.Response, err error) {
-		log.Fatalln("Something went wrong while fetching the requested data...")
+		fmt.Println("Something went wrong while fetching the requested data...")
 	})
 
-	c.Visit("https://scp-wiki.wikidot.com/scp-" + query)
+	if query == "random" {
+		var scpMax int = 7999
+		var random string = strconv.Itoa(rand.Intn(scpMax))
+		fmt.Println(random)
+		c.Visit("https://scp-wiki.wikidot.com/scp-" + random)
+	} else {
+		c.Visit("https://scp-wiki.wikidot.com/scp-" + query)
+	}
 
 	return entry
 }
